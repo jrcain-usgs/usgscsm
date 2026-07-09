@@ -69,15 +69,17 @@ set(USGSCSM_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include/usgscsm"
                          "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+# CSM API library
+find_path(CSM_INCLUDE_DIR NAMES "csm.h"
+                          PATH_SUFFIXES "csm"
+                          PATHS $ENV{CONDA_PREFIX}/include/
+                          REQUIRED)
+find_library(CSM_LIBRARY csmapi PATHS $ENV{CONDA_PREFIX}/lib REQUIRED)
+message("-- Found CSM Library: ${CSM_LIBRARY}")
+message("-- Found CSM Include Directory: ${CSM_INCLUDE_DIR}")
+
 if(USGSCSM_EXTERNAL_DEPS)
   message(STATUS "Using external dependencies")
-  # CSM API library
-  find_path(CSM_INCLUDE_DIR NAMES "csm.h"
-                            PATH_SUFFIXES "csm"
-                            PATHS $ENV{CONDA_PREFIX}/include/)
-  find_library(CSM_LIBRARY csmapi PATHS $ENV{CONDA_PREFIX}/lib)
-  message("-- Found external CSM Library: ${CSM_LIBRARY}")
-  message("-- Found external CSM Include Directory: ${CSM_INCLUDE_DIR}")
 
   # Nlohmann JSON
   find_package(nlohmann_json REQUIRED)
@@ -94,16 +96,12 @@ if(USGSCSM_EXTERNAL_DEPS)
   set(PROJ_TARGET PROJ::proj)
   add_library(usgscsm SHARED ${USGSCSM_SRC_FILES})
 else()
+  set(BUILD_SHARED_LIBS OFF)
   message(STATUS "Using embedded dependencies")
-  # CSM API library
-  add_subdirectory(csm)
-  set(CSM_INCLUDE_DIR /csm)
-  set(CSM_LIBRARY csmapi)
 
   # Skip PROJ library for WebAssembly builds (projected sensor model is disabled)
   if(NOT EMSCRIPTEN)
     # First configure proj library
-    set(BUILD_SHARED_LIBS OFF)
     set(PROJ_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/PROJ")
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/PROJ/cmake ${CMAKE_MODULE_PATH})
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/PROJ/src ${CMAKE_MODULE_PATH})
@@ -679,10 +677,6 @@ else()
                             $<INSTALL_INTERFACE:include>
                             PRIVATE)
 
-  target_include_directories(ale
-                             PRIVATE
-                             ${ALE_INCLUDE_DIRS}
-  )
   set(ALE_LINKS nlohmann_json::nlohmann_json
                 Eigen3::Eigen
   )
@@ -704,9 +698,7 @@ else()
   set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
   set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fPIC" )
 
-  add_library(usgscsm SHARED ${USGSCSM_SRC_FILES}
-                             $<TARGET_OBJECTS:ale>
-  )
+  add_library(usgscsm SHARED ${USGSCSM_SRC_FILES})
 endif(USGSCSM_EXTERNAL_DEPS)
 
 set_target_properties(usgscsm PROPERTIES
@@ -746,8 +738,7 @@ endif()
 
 add_executable(usgscsm_cam_test bin/usgscsm_cam_test.cc)
 target_link_libraries(usgscsm_cam_test
-    usgscsm
-    ${CSM_LIBRARY})
+    usgscsm)
 
 install(TARGETS usgscsm
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
