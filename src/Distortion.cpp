@@ -463,6 +463,21 @@ void removeDistortion(double dx, double dy, double &ux, double &uy,
       return;
     } break;
 
+    // LUNARORBITER is declared and emitted by ALE but not implemented here.
+    case LUNARORBITER:
+      throw csm::Error(csm::Error::UNSUPPORTED_FUNCTION,
+                       "LUNARORBITER distortion is not implemented.",
+                       "removeDistortion");
+      break;
+
+    // Throw on an unrecognized distortion type instead of silently ignoring it.
+    default:
+      throw csm::Error(csm::Error::UNSUPPORTED_FUNCTION,
+                       "Unsupported distortion type: " +
+                           std::to_string(static_cast<int>(distortionType)),
+                       "removeDistortion");
+      break;
+
   }
 }
 
@@ -836,10 +851,25 @@ void applyDistortion(double ux, double uy, double &dx, double &dy,
     case RADTAN:
     {
       ux /= focalLength; uy /= focalLength; // Find normalized coordinates
-      computeRadTanDistortion(ux, uy, dx, dy, opticalDistCoeffs);  
+      computeRadTanDistortion(ux, uy, dx, dy, opticalDistCoeffs);
       dx *= focalLength; dy *= focalLength; // Convert back to pixel coordinates
-    }  
+    }
     break;
-    
+
+    // LUNARORBITER is declared and emitted by ALE but not implemented here.
+    case LUNARORBITER:
+      throw csm::Error(csm::Error::UNSUPPORTED_FUNCTION,
+                       "LUNARORBITER distortion is not implemented.",
+                       "applyDistortion");
+      break;
+
+    // Throw on an unrecognized distortion type instead of silently ignoring it.
+    default:
+      throw csm::Error(csm::Error::UNSUPPORTED_FUNCTION,
+                       "Unsupported distortion type: " +
+                           std::to_string(static_cast<int>(distortionType)),
+                       "applyDistortion");
+      break;
+
   }
 }
