@@ -4,11 +4,11 @@
 
 # USGSCSM
 
-[![npm version](https://img.shields.io/npm/v/usgscsm-wasm.svg)](https://www.npmjs.com/package/usgscsm-wasm)
-[![npm downloads](https://img.shields.io/npm/dm/usgscsm-wasm.svg)](https://www.npmjs.com/package/usgscsm-wasm)
+[![npm version](https://img.shields.io/npm/v/@usgs-astrogeology/usgscsm.svg)](https://www.npmjs.com/package/@usgs-astrogeology/usgscsm)
+[![npm downloads](https://img.shields.io/npm/dm/@usgs-astrogeology/usgscsm.svg)](https://www.npmjs.com/package/@usgs-astrogeology/usgscsm)
 [![GitHub release](https://img.shields.io/github/v/release/USGS-Astrogeology/usgscsm)](https://github.com/USGS-Astrogeology/usgscsm/releases)
 
-**NPM Package:** [`usgscsm-wasm`](https://www.npmjs.com/package/usgscsm-wasm)
+**NPM Package:** [`@usgs-astrogeology/usgscsm`](https://www.npmjs.com/package/@usgs-astrogeology/usgscsm)
 
 **CDN Links:**
 - jsDelivr: `https://cdn.jsdelivr.net/npm/usgscsm-wasm/dist/usgscsm.js`
@@ -116,23 +116,24 @@ log level is set to *debug* or *trace*.
 * cmake 3.15 or newer
 * GNU-compatible Make
 * a C++11 compliant compiler
+* JSON, ALE, and PROJ (internal or external)
+* CSM
 
-This repository has all of its external C++ dependencies included in it. The
-excellent header-only JSON library
-[JSON for Modern C++](https://github.com/nlohmann/json) is included directly in
-the source code. The other three dependencies, The Abstraction Library for
-Ephemerides, the CSM API library, and googletest are included as git submodules.
-When you clone this library make sure you add the `--recursive` flag to your
-`git clone` command. Alternatively, you can run
-`git submodule update --init --recursive` after cloning.
+#### Internal Dependencies (git submodules)
 
-You can also install the build requirements using Conda with the provided
-`environment.yml` file. The following commands will create a new environment
-to build against. Note that googletest cannot be installed via anaconda and must
-be available within the source code. You can remove the googletest dependency
-by disabling the tests.
+`JSON`, `ALE`, and `PROJ` must be built-in for the release, so they are included as git submodules.  `gtest` is also included as a git submodule for development.
 
-```
+To clone the submodules as well when cloning, add the `--recurse-submodules` flag:  
+`git clone --recurse-submodules <repo link>`  
+
+Or, after cloning, run:  
+`git submodule update --init --recursive`
+
+#### External Dependencies (conda)
+
+The rest of the dependencies (or, if not testing/building for release, all of the dependencies) are listed in the environment.yml and can be installed with conda:
+
+```sh
 conda env create -n usgscsm -f environment.yml
 ```
 
@@ -215,18 +216,16 @@ Or download files from [GitHub Releases](https://github.com/USGS-Astrogeology/us
 - Emscripten 3.1.58 (compatible with Binaryen 117)
 - cmake 3.15+
 
-**Setup with Conda:**
-```bash
-conda create -n usgscsm python=3.11
-conda activate usgscsm
-conda install -c conda-forge emscripten=3.1.58
-```
-
 **Build:**
 ```bash
 # Clone with submodules
-git clone --recursive https://github.com/USGS-Astrogeology/usgscsm.git
+git clone --recurse-submodules https://github.com/USGS-Astrogeology/usgscsm.git
 cd usgscsm
+
+# Create the usgscsm Conda Env and install Emscripten
+conda env create -n usgscsm -f environment.yml
+conda activate usgscsm
+conda install -c conda-forge emscripten=3.1.58
 
 # Configure and build
 mkdir wasmbuild && cd wasmbuild
