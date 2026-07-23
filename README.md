@@ -11,8 +11,8 @@
 **NPM Package:** [`@usgs-astrogeology/usgscsm`](https://www.npmjs.com/package/@usgs-astrogeology/usgscsm)
 
 **CDN Links:**
-- jsDelivr: `https://cdn.jsdelivr.net/npm/usgscsm-wasm/dist/usgscsm.js`
-- unpkg: `https://unpkg.com/usgscsm-wasm/dist/usgscsm.js`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/@usgs-astrogeology/usgscsm/dist/usgscsm.js`
+- unpkg: `https://unpkg.com/@usgs-astrogeology/usgscsm/dist/usgscsm.js`
 
 This library provides *Community Sensor Model (CSM)*-compliant sensor models
 created by the USGS Astrogeology Science Center.
