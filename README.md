@@ -183,12 +183,12 @@ USGSCSM can be compiled to WebAssembly for use in web browsers and Node.js.
 
 ### Installation
 
-**GitHub Releases (Direct Import):**
+**With jsDelivr:**
 
 ```html
 <script type="module">
-  // Import directly from GitHub Release (replace v2.0.2 with latest version)
-  import USGSCSM from 'https://github.com/USGS-Astrogeology/usgscsm/releases/download/v2.0.2/usgscsm.js';
+
+  import USGSCSM from 'https://cdn.jsdelivr.net/npm/@usgs-astrogeology/usgscsm/dist/usgscsm.js';
   
   const Module = await USGSCSM();
   const model = new Module.USGSCSMModel();
@@ -262,10 +262,10 @@ npm test
 
 ```javascript
 // Using npm package
-import USGSCSM from 'usgscsm-wasm';
+import USGSCSM from '@usgs-astrogeology/usgscsm';
 
 // OR using CDN
-// import USGSCSM from 'https://cdn.jsdelivr.net/npm/usgscsm-wasm/dist/usgscsm.js';
+// import USGSCSM from 'https://cdn.jsdelivr.net/npm/@usgs-astrogeology/usgscsm/dist/usgscsm.js';
 
 const Module = await USGSCSM();
 const model = new Module.USGSCSMModel();
